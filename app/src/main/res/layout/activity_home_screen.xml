@@ -8,7 +8,7 @@
     android:background="@color/white"
     tools:context=".HomeScreen">
 
-    <!-- Left Icon -->
+
     <ImageView
         android:id="@+id/location_img"
         android:src="@drawable/ic_location"
@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Right Icon -->
     <ImageView
         android:id="@+id/menu_img"
         android:src="@drawable/ic_menu"
