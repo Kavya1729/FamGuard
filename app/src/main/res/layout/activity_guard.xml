@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".GuardScreen">
 
     <TextView
         android:id="@+id/heading"
@@ -124,19 +124,7 @@
         app:layout_constraintBottom_toBottomOf="@id/green_card"
         />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="8dp"
-        app:itemIconSize="26dp"
-        app:itemTextColor="@drawable/nav_items_colors"
-        app:itemIconTint="@drawable/nav_items_colors"
-        app:itemBackground="@android:color/white"
-        app:menu="@menu/bottom_bar_items"
-        app:itemActiveIndicatorStyle="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+
 
 
 
