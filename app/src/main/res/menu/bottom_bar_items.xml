@@ -4,6 +4,7 @@
     <item android:title="Home"
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
+
         />
 
     <item android:title="Dashboard"
