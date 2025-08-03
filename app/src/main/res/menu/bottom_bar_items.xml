@@ -13,7 +13,7 @@
         />
 
     <item android:title="Guard"
-        android:id="@+id/nav_safety"
+        android:id="@+id/nav_guard"
         android:icon="@drawable/ic_safety"
         />
 
