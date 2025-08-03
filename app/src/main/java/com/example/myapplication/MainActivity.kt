@@ -36,6 +36,8 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        bottomBar.selectedItemId = R.id.nav_home
     }
 
     private fun inflateFragment(newInstance: Fragment) {
