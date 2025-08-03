@@ -5,15 +5,14 @@
     android:id="@+id/main"
     android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".GuardScreen">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/heading"
         android:text="Security"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:textSize="32sp"
+        android:textSize="24sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/pink_card"
         app:layout_constraintStart_toStartOf="parent"
