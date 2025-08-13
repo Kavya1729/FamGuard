@@ -36,137 +36,24 @@
         android:textSize="24sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_margin="24dp"
         app:layout_constraintStart_toEndOf="@id/location_img"
         app:layout_constraintEnd_toStartOf="@id/menu_img"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/first_card"
-        android:layout_width="match_parent"
-        android:layout_height="144dp"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_member"
         app:layout_constraintTop_toBottomOf="@id/heading"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="24dp"
-        android:layout_marginTop="44dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        app:cardBackgroundColor="@color/white"
-        />
-    
-    <ImageView
-        android:id="@+id/img_user_one"
-        android:layout_width="64dp"
-        android:elevation="10dp"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_user"
-        app:layout_constraintStart_toStartOf="@id/first_card"
-        app:layout_constraintTop_toTopOf="@id/first_card"
-        app:layout_constraintBottom_toBottomOf="@id/first_card"
-        android:layout_margin="18dp"
-        />
-
-    <TextView
-        android:id="@+id/user_name_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kavya Mittal"
-        android:layout_margin="24dp"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:textColor="@color/black"
-        android:elevation="10dp"
-        app:layout_constraintStart_toEndOf="@id/img_user_one"
-        app:layout_constraintTop_toTopOf="@id/first_card"
-        />
-
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/second_card"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="144dp"
-        app:layout_constraintTop_toBottomOf="@id/first_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="24dp"
+        android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        app:cardBackgroundColor="@color/white"
-        />
-
-    <ImageView
-        android:id="@+id/img_user_two"
-        android:layout_width="64dp"
-        android:elevation="10dp"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_user"
-        app:layout_constraintStart_toStartOf="@id/second_card"
-        app:layout_constraintTop_toTopOf="@id/second_card"
-        app:layout_constraintBottom_toBottomOf="@id/second_card"
-        android:layout_margin="18dp"
-        />
-
-    <TextView
-        android:id="@+id/user_name_two"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kavya Mittal"
-        android:layout_margin="24dp"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:textColor="@color/black"
-        android:elevation="10dp"
-        app:layout_constraintStart_toEndOf="@id/img_user_two"
-        app:layout_constraintTop_toTopOf="@id/second_card"
+        tools:listitem="@layout/item_member"
         />
 
 
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/third_card"
-        android:layout_width="match_parent"
-        android:layout_height="144dp"
-        app:layout_constraintTop_toBottomOf="@id/second_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        app:cardBackgroundColor="@color/white"
-        />
-
-    <ImageView
-        android:id="@+id/img_user_three"
-        android:layout_width="64dp"
-        android:elevation="10dp"
-        android:layout_height="64dp"
-        android:src="@drawable/ic_user"
-        app:layout_constraintStart_toStartOf="@id/third_card"
-        app:layout_constraintTop_toTopOf="@id/third_card"
-        app:layout_constraintBottom_toBottomOf="@id/third_card"
-        android:layout_margin="18dp"
-        />
-
-    <TextView
-        android:id="@+id/user_name_three"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kavya Mittal"
-        android:layout_margin="24dp"
-        android:textStyle="bold"
-        android:textSize="16dp"
-        android:textColor="@color/black"
-        android:elevation="10dp"
-        app:layout_constraintStart_toEndOf="@id/img_user_three"
-        app:layout_constraintTop_toTopOf="@id/third_card"
-        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
