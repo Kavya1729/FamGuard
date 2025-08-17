@@ -16,10 +16,17 @@ public abstract class MyFamilyDatabase: RoomDatabase() {
         @Volatile
         private var INSTANCE: MyFamilyDatabase? = null
 
-//        fun getDatabase(context: Context): MyFamilyDatabase{
-//            INSTANCE?.let { return it }
-//        }
+        fun getDatabase(context: Context): MyFamilyDatabase{
+            INSTANCE?.let { return it }
 
-//        val instance = Room.databaseBuilder(context.applicationContext, MyFamilyDatabase::class.java,"my_family_db").build()
+            return synchronized(MyFamilyDatabase::class.java){
+                val instance = Room.databaseBuilder(context.applicationContext, MyFamilyDatabase::class.java,"my_family_db").build()
+
+                INSTANCE = instance
+
+                instance
+            }
+
+        }
     }
 }
