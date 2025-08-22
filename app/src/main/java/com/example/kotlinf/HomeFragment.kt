@@ -101,7 +101,7 @@ class HomeFragment : Fragment() {
     private suspend fun insertDatabaseContacts(listContacts1: ArrayList<ContactModel>) {
         val database = MyFamilyDatabase.getDatabase(requireContext())
 
-        database.contactDao().insertAll(listContacts)
+        database.contactDao().insertAll(listContacts1)
     }
 
     private fun fetchContacts(): ArrayList<ContactModel> {
