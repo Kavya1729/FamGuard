@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.kotlinf
 
 data class MemberModel(
     val name: String,
