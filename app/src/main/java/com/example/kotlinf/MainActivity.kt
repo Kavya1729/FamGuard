@@ -1,12 +1,15 @@
 package com.example.kotlinf
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -22,7 +25,18 @@ class MainActivity : AppCompatActivity() {
     val permissionCode = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Install splash screen BEFORE super.onCreate()
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
+        // Check if user is logged in
+        if (!isUserLoggedIn()) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -54,6 +68,11 @@ class MainActivity : AppCompatActivity() {
         bottomBar.selectedItemId = R.id.nav_home
     }
 
+    private fun isUserLoggedIn(): Boolean {
+        val sharedPrefs = getSharedPreferences("MyFamilyPrefs", Context.MODE_PRIVATE)
+        return sharedPrefs.getBoolean("isLoggedIn", false)
+    }
+
     private fun askForPermission() {
         ActivityCompat.requestPermissions(this,permissions,permissionCode)
     }
@@ -76,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             if(allPermissionGranted()){
 
             }else{
-                
+
             }
         }
     }

@@ -56,6 +56,8 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     androidTestImplementation("androidx.room:room-testing:2.6.1")
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     // Import the BoM for the Firebase platform
     implementation(platform("com.google.firebase:firebase-bom:34.1.0"))
 
