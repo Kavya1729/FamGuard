@@ -1,10 +1,12 @@
 package com.example.kotlinf
 
 import android.Manifest
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,6 +16,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,6 +71,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomBar.selectedItemId = R.id.nav_home
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val name = currentUser?.displayName.toString()
+        val email = currentUser?.email.toString()
+        val phoneNumber = currentUser?.phoneNumber.toString()
+
+        val db = Firebase.firestore
+
+        val user = hashMapOf(
+            "name" to name,
+            "email" to email,
+            "phoneNumber" to phoneNumber
+        )
+
+        db.collection("users").document(email).set(user).addOnSuccessListener {  }
+            .addOnFailureListener {  }
+
     }
 
     private fun isUserLoggedIn(): Boolean {
