@@ -23,9 +23,15 @@ import java.util.ArrayList
 class HomeFragment : Fragment() {
 
     lateinit var inviteAdapter: InviteAdapter
+    lateinit var mContext: Context
     private lateinit var auth: FirebaseAuth
 
     private val listContacts: ArrayList<ContactModel> = ArrayList()
+
+    override fun onAttach(context:Context){
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +88,7 @@ class HomeFragment : Fragment() {
         val adapter = MemberAdapter(listMembers)
 
         val recycler = requireView().findViewById<RecyclerView>(R.id.recycler_member)
-        recycler.layoutManager = LinearLayoutManager(requireContext())
+        recycler.layoutManager = LinearLayoutManager(mContext)
         recycler.adapter = adapter
 
         inviteAdapter = InviteAdapter(listContacts)
@@ -93,7 +99,7 @@ class HomeFragment : Fragment() {
         }
 
         val inviteRecycler = requireView().findViewById<RecyclerView>(R.id.recycler_invite)
-        inviteRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        inviteRecycler.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
         inviteRecycler.adapter = inviteAdapter
     }
 
@@ -111,7 +117,7 @@ class HomeFragment : Fragment() {
         val currentUser = auth.currentUser
         val userName = currentUser?.displayName ?: "User"
 
-        AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(mContext)
             .setTitle("Logout")
             .setMessage("Are you sure you want to logout, $userName?")
             .setPositiveButton("Logout") { _, _ ->
@@ -137,14 +143,14 @@ class HomeFragment : Fragment() {
         editor.apply()
 
         // Navigate to LoginActivity
-        val intent = Intent(requireContext(), LoginActivity::class.java)
+        val intent = Intent(mContext, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         requireActivity().finish()
     }
 
     private fun fetchDatabaseContacts() {
-        val database = MyFamilyDatabase.getDatabase(requireContext())
+        val database = MyFamilyDatabase.getDatabase(mContext)
 
         database.contactDao().getAllContacts().observe(viewLifecycleOwner) {
             listContacts.clear()
@@ -155,7 +161,7 @@ class HomeFragment : Fragment() {
     }
 
     private suspend fun insertDatabaseContacts(listContacts1: ArrayList<ContactModel>) {
-        val database = MyFamilyDatabase.getDatabase(requireContext())
+        val database = MyFamilyDatabase.getDatabase(mContext)
 
         database.contactDao().insertAll(listContacts1)
     }
