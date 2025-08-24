@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.Firebase
@@ -31,7 +32,6 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_guard, container, false)
 
         // Initialize views
@@ -42,7 +42,7 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
         // Set up RecyclerView
         setupRecyclerView()
 
-        // Set onClickListener directly here
+        // Set onClickListener for send invite button
         sendInviteBtn.setOnClickListener {
             sendInvite()
         }
@@ -57,11 +57,10 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getInvites() // Call this here
+        getInvites()
     }
 
     private fun setupRecyclerView() {
-        // Initialize adapter with empty list
         adapter = InviteMailAdapter(invitesList, this)
         inviteRecycler.layoutManager = LinearLayoutManager(mContext)
         inviteRecycler.adapter = adapter
@@ -81,69 +80,132 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
         firestore.collection("users")
             .document(currentUserEmail)
             .collection("invites")
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
+            .whereEqualTo("invite_status", 0) // Only pending invites
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("invite89", "Error listening for invites", error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null) {
                     invitesList.clear()
 
-                    for (document in task.result) {
-                        val inviteStatus = document.getLong("invite_status")
-                        Log.d("invite89", "Document ID: ${document.id}, Status: $inviteStatus")
-
-                        // Check for pending invites (status = 0)
-                        if (inviteStatus == 0L) {
-                            invitesList.add(document.id)
-                        }
+                    for (document in snapshot.documents) {
+                        invitesList.add(document.id)
+                        Log.d("invite89", "Found pending invite from: ${document.id}")
                     }
 
-                    Log.d("invite89", "Found ${invitesList.size} pending invites: $invitesList")
-
-                    // Notify adapter of data change
+                    Log.d("invite89", "Found ${invitesList.size} pending invites")
                     adapter.notifyDataSetChanged()
-
-                    if (invitesList.isEmpty()) {
-                        Log.d("invite89", "No pending invites found")
-                    }
                 } else {
-                    Log.e("invite89", "Error getting invites", task.exception)
+                    Log.e("invite89", "Snapshot is null")
                 }
             }
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = GuardFragment()
     }
 
     private fun sendInvite() {
         val mail = inviteMailEditText.text.toString().trim()
 
         if (mail.isEmpty()) {
-            Log.e("invite89", "Email is empty")
+            Toast.makeText(mContext, "Please enter an email address", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!isValidEmail(mail)) {
+            Toast.makeText(mContext, "Please enter a valid email address", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email
+        if (currentUserEmail == null) {
+            Toast.makeText(mContext, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (mail == currentUserEmail) {
+            Toast.makeText(mContext, "You cannot invite yourself", Toast.LENGTH_SHORT).show()
             return
         }
 
         val firestore = Firebase.firestore
-        val data = hashMapOf(
-            "invite_status" to 0
-        )
 
-        val senderMail = FirebaseAuth.getInstance().currentUser?.email.toString()
-
-        Log.d("invite89", "Sending invite from $senderMail to $mail")
-
+        // First check if the user exists
         firestore.collection("users")
             .document(mail)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // User exists, send the invite
+                    sendInviteToUser(mail, currentUserEmail)
+                } else {
+                    Toast.makeText(mContext, "User with this email is not registered", Toast.LENGTH_LONG).show()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("invite89", "Error checking if user exists", exception)
+                Toast.makeText(mContext, "Error checking user: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun sendInviteToUser(recipientEmail: String, senderEmail: String) {
+        val firestore = Firebase.firestore
+
+        // Check if invite already exists
+        firestore.collection("users")
+            .document(recipientEmail)
             .collection("invites")
-            .document(senderMail)
+            .document(senderEmail)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val status = document.getLong("invite_status")
+                    when (status) {
+                        0L -> Toast.makeText(mContext, "Invite already sent to this user", Toast.LENGTH_SHORT).show()
+                        1L -> Toast.makeText(mContext, "You are already connected with this user", Toast.LENGTH_SHORT).show()
+                        -1L -> {
+                            // Previous invite was denied, send new one
+                            createInvite(recipientEmail, senderEmail)
+                        }
+                    }
+                } else {
+                    // No existing invite, create new one
+                    createInvite(recipientEmail, senderEmail)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("invite89", "Error checking existing invite", exception)
+                Toast.makeText(mContext, "Error sending invite: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun createInvite(recipientEmail: String, senderEmail: String) {
+        val firestore = Firebase.firestore
+        val data = hashMapOf(
+            "invite_status" to 0,
+            "sent_at" to System.currentTimeMillis(),
+            "sender_name" to (FirebaseAuth.getInstance().currentUser?.displayName ?: "Unknown User")
+        )
+
+        Log.d("invite89", "Creating invite from $senderEmail to $recipientEmail")
+
+        firestore.collection("users")
+            .document(recipientEmail)
+            .collection("invites")
+            .document(senderEmail)
             .set(data)
             .addOnSuccessListener {
-                Log.d("invite89", "Invite sent successfully to $mail")
+                Log.d("invite89", "Invite sent successfully to $recipientEmail")
+                Toast.makeText(mContext, "Invite sent successfully!", Toast.LENGTH_SHORT).show()
                 inviteMailEditText.text.clear()
             }
             .addOnFailureListener { exception ->
-                Log.e("invite89", "Failed to send invite to $mail", exception)
+                Log.e("invite89", "Failed to send invite to $recipientEmail", exception)
+                Toast.makeText(mContext, "Failed to send invite: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
     override fun onAcceptClick(mail: String) {
@@ -154,7 +216,7 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
         updateInviteStatus(mail, -1, "denied")
     }
 
-    private fun updateInviteStatus(mail: String, status: Int, action: String) {
+    private fun updateInviteStatus(senderEmail: String, status: Int, action: String) {
         val firestore = Firebase.firestore
         val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email
 
@@ -163,26 +225,60 @@ class GuardFragment : Fragment(), InviteMailAdapter.OnActionClick {
             return
         }
 
-        val data = hashMapOf(
-            "invite_status" to status
+        val data = hashMapOf<String, Any>(
+            "invite_status" to status,
+            "responded_at" to System.currentTimeMillis()
         )
 
-        Log.d("invite89", "Updating invite status: $mail -> $status ($action)")
+        Log.d("invite89", "Updating invite status: $senderEmail -> $status ($action)")
 
         firestore.collection("users")
             .document(currentUserEmail)
             .collection("invites")
-            .document(mail)
-            .set(data)
+            .document(senderEmail)
+            .update(data)
             .addOnSuccessListener {
-                Log.d("invite89", "Invite $action successfully for $mail")
+                Log.d("invite89", "Invite $action successfully for $senderEmail")
+                Toast.makeText(mContext, "Invite $action!", Toast.LENGTH_SHORT).show()
 
                 // Remove from local list and update adapter
-                invitesList.remove(mail)
+                invitesList.remove(senderEmail)
                 adapter.notifyDataSetChanged()
+
+                // If accepted, create reverse connection for easy lookup
+                if (status == 1) {
+                    createReverseConnection(senderEmail, currentUserEmail)
+                }
             }
             .addOnFailureListener { exception ->
-                Log.e("invite89", "Failed to $action invite for $mail", exception)
+                Log.e("invite89", "Failed to $action invite for $senderEmail", exception)
+                Toast.makeText(mContext, "Failed to $action invite", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun createReverseConnection(senderEmail: String, currentUserEmail: String) {
+        val firestore = Firebase.firestore
+        val data = hashMapOf(
+            "invite_status" to 1,
+            "connected_at" to System.currentTimeMillis(),
+            "connection_type" to "reverse" // To identify this is a reverse connection
+        )
+
+        firestore.collection("users")
+            .document(senderEmail)
+            .collection("invites")
+            .document(currentUserEmail)
+            .set(data)
+            .addOnSuccessListener {
+                Log.d("invite89", "Reverse connection created successfully")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("invite89", "Failed to create reverse connection", exception)
+            }
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = GuardFragment()
     }
 }
