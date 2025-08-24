@@ -3,12 +3,15 @@ package com.example.kotlinf
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 
-class InviteAdapter(private val listContacts: List<ContactModel>):
-    RecyclerView.Adapter<InviteAdapter.ViewHolder>() {
-
+class InviteAdapter(
+    private val listContacts: List<ContactModel>,
+    private val onInviteClick: OnInviteClick
+): RecyclerView.Adapter<InviteAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -22,6 +25,10 @@ class InviteAdapter(private val listContacts: List<ContactModel>):
     override fun onBindViewHolder(holder: InviteAdapter.ViewHolder, position: Int) {
         val item = listContacts[position]
         holder.name.text = item.name
+
+        holder.inviteButton.setOnClickListener {
+            onInviteClick.onInviteClick(item)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -30,6 +37,10 @@ class InviteAdapter(private val listContacts: List<ContactModel>):
 
     class ViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
         val name = item.findViewById<TextView>(R.id.name)
+        val inviteButton = item.findViewById<MaterialButton>(R.id.invite_button)
     }
 
+    interface OnInviteClick {
+        fun onInviteClick(contact: ContactModel)
+    }
 }

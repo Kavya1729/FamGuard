@@ -2,14 +2,26 @@
     <!-- Base application theme -->
     <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here -->
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Make status bar icons dark for visibility on white background -->
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication">
+    <item name="android:statusBarColor">@color/white</item>
+    <!-- Make status bar icons dark for visibility on white background -->
+    <item name="android:windowLightStatusBar">true</item>
+        </style>
+
+
 
     <!-- Splash screen theme -->
     <style name="Theme.MyApp.Starting" parent="Theme.SplashScreen">
         <!-- Splash screen background -->
         <item name="windowSplashScreenBackground">@color/green</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <!-- Make status bar icons dark for visibility on white background -->
+        <item name="android:windowLightStatusBar">true</item>
 
         <!-- App icon in center -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_safety</item>

@@ -5,26 +5,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/dark_background"
     tools:context=".HomeFragment">
 
+    <!-- Header with location icon (clickable to go to dashboard) -->
     <ImageView
         android:id="@+id/location_img"
         android:src="@drawable/ic_location"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:padding="4dp"
+        android:background="@drawable/user_avatar_circle"
+        app:tint="@color/cyan_primary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/menu_dots"
         android:src="@drawable/ic_menu"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="32dp"
+        android:padding="4dp"
+        app:tint="@color/text_secondary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -32,50 +38,55 @@
         android:id="@+id/heading"
         android:text="My Family"
         android:textStyle="bold"
-        android:textColor="@color/black"
+        android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toEndOf="@id/location_img"
         app:layout_constraintEnd_toStartOf="@id/menu_dots"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.5" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-
+    <!-- Family Members List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_member"
         app:layout_constraintTop_toBottomOf="@id/heading"
         app:layout_constraintBottom_toTopOf="@id/invite_card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="16dp"
-        tools:listitem="@layout/item_member"
-        />
+        android:paddingHorizontal="16dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/item_member"/>
 
-
+    <!-- Invite Section -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/invite_card"
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="10dp"
+        app:cardBackgroundColor="@color/dark_card"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/cyan_primary"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_invite"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:background="@color/white"
-            tools:listitem="@layout/item_invite" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_invite"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                tools:listitem="@layout/item_invite" />
+
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

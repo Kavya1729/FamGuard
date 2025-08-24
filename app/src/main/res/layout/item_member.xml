@@ -1,193 +1,179 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="24dp"
-    android:background="@color/white"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="8dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/dark_card"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#2A3441">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp">
 
-        <!-- User image -->
-        <ImageView
-            android:id="@+id/img_user"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_user"
-            android:elevation="10dp"
+        <!-- User Avatar with Border -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/avatar_container"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- User name -->
+            <ImageView
+                android:id="@+id/img_user"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_user"
+                android:background="@drawable/user_avatar_circle"
+                android:padding="12dp"
+                app:tint="@color/cyan_primary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- User Name -->
         <TextView
             android:id="@+id/user_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Kavya Mittal"
-            android:textColor="@color/black"
-            android:textSize="20sp"
+            android:text="Emily"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:elevation="10dp"
-            app:layout_constraintStart_toEndOf="@id/img_user"
-            app:layout_constraintTop_toTopOf="@id/img_user"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/avatar_container"
+            app:layout_constraintTop_toTopOf="@id/avatar_container"
+            app:layout_constraintEnd_toStartOf="@id/status_container" />
 
-        <!-- Location icon -->
-        <ImageView
-            android:id="@+id/img_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:src="@drawable/ic_location"
-            android:elevation="10dp"
-            app:tint="@color/green"
-            app:layout_constraintStart_toStartOf="@id/user_name"
-            app:layout_constraintTop_toBottomOf="@id/user_name" />
-
-        <!-- Location text -->
-        <TextView
-            android:id="@+id/location_text"
+        <!-- Location -->
+        <LinearLayout
+            android:id="@+id/location_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="Mohalla Kot Delhi Wale Amasefsfsfsfesffsrohaadafasaasadas jand"
-            android:textSize="13sp"
-            app:layout_constraintStart_toEndOf="@id/img_location"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/img_location" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintStart_toEndOf="@id/avatar_container"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintEnd_toStartOf="@id/status_container">
 
-        <!-- Battery + WiFi container -->
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_location"
+                app:tint="@color/text_secondary" />
+
+            <TextView
+                android:id="@+id/location_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Safe"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Status Container -->
         <LinearLayout
-            android:id="@+id/status_layout"
+            android:id="@+id/status_container"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/avatar_container">
+
+            <!-- Status Badge -->
+            <TextView
+                android:id="@+id/status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Safe"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/status_active"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+
+        </LinearLayout>
+
+        <!-- Bottom Info Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="@id/img_user"
-            app:layout_constraintTop_toBottomOf="@id/img_location">
+            app:layout_constraintTop_toBottomOf="@id/avatar_container">
 
-            <!-- Battery layout -->
+            <!-- Battery Info -->
             <LinearLayout
-                android:id="@+id/battery_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/green"
-                android:padding="1dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/dark_surface"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="12dp">
 
                 <ImageView
-                    android:id="@+id/img_battery"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:src="@drawable/ic_battery"
-                    android:elevation="10dp"
-                    app:tint="@color/white" />
+                    app:tint="@color/cyan_primary" />
 
                 <TextView
                     android:id="@+id/battery_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="90%"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:elevation="10dp" />
+                    android:text="92%"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
+
             </LinearLayout>
 
-            <!-- Space between battery and WiFi -->
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content" />
-
-            <!-- WiFi layout -->
+            <!-- Distance Info -->
             <LinearLayout
-                android:id="@+id/wifi_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                android:background="@color/green"
-                android:padding="1dp"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/img_wifi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_wifi"
-                    android:elevation="10dp"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:id="@+id/wifi_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:textColor="@color/white"
-                    android:text="WIFI"
-                    android:textSize="14sp"
-                    android:elevation="10dp" />
-            </LinearLayout>
-
-            <Space
-                android:layout_width="16dp"
-                android:layout_height="wrap_content" />
-
-            <!-- Distance layout -->
-            <LinearLayout
-                android:id="@+id/distance_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/green"
-                android:padding="1dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@color/dark_surface"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
 
                 <ImageView
-                    android:id="@+id/img_distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
                     android:src="@drawable/ic_distance"
-                    android:elevation="10dp"
-                    app:tint="@color/white" />
+                    app:tint="@color/cyan_primary" />
 
                 <TextView
                     android:id="@+id/distance_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="10 km"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:elevation="10dp" />
-            </LinearLayout>
-        </LinearLayout>
+                    android:text="220 m"
+                    android:textColor="@color/text_primary"
+                    android:textSize="12sp" />
 
-        <!-- Call icon -->
-        <ImageView
-            android:padding="2dp"
-            android:background="@drawable/shape_circle"
-            android:id="@+id/img_call"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_call"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="@color/white" />
+            </LinearLayout>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
