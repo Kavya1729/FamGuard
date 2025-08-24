@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/menu_img"
+        android:id="@+id/menu_dots"
         android:src="@drawable/ic_menu"
         android:layout_width="24dp"
         android:layout_height="24dp"
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         app:layout_constraintStart_toEndOf="@id/location_img"
-        app:layout_constraintEnd_toStartOf="@id/menu_img"
+        app:layout_constraintEnd_toStartOf="@id/menu_dots"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
 
@@ -68,7 +68,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_invite"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="140dp"
             android:background="@color/white"
             tools:listitem="@layout/item_invite" />
 

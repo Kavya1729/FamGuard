@@ -1,6 +1,8 @@
 package com.example.kotlinf
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -28,10 +30,25 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if user is already logged in
+        if (isUserLoggedIn()) {
+            navigateToMain()
+            return
+        }
+
         setContentView(R.layout.activity_login)
 
         auth = Firebase.auth
         credentialManager = CredentialManager.create(this)
+
+        // Check if Firebase user is already signed in
+        if (auth.currentUser != null) {
+            // User is signed in Firebase but not in SharedPrefs, save the state
+            saveLoginState(auth.currentUser?.displayName, auth.currentUser?.email)
+            navigateToMain()
+            return
+        }
 
         // Instantiate a Google sign-in request
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -58,6 +75,7 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("fire89", "Google Sign In request successful")
             } catch (e: Exception) {
                 Log.e("fire89", "Sign-in failed", e)
+                showErrorMessage("Sign-in failed: ${e.message}")
             }
         }
     }
@@ -71,9 +89,11 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("fire89", "Google Sign In token received")
             } catch (e: Exception) {
                 Log.e("fire89", "Google Sign In failed", e)
+                showErrorMessage("Google Sign In failed: ${e.message}")
             }
         } else {
             Log.w("fire89", "Credential is not of type Google ID!")
+            showErrorMessage("Invalid credential type")
         }
     }
 
@@ -83,14 +103,57 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
+                    Log.d("fire89", "Firebase authentication successful")
+
+                    // Save login state to SharedPreferences
+                    saveLoginState(user?.displayName, user?.email)
+
                     Snackbar.make(
                         findViewById(android.R.id.content),
                         "Welcome ${user?.displayName}",
-                        Snackbar.LENGTH_LONG
+                        Snackbar.LENGTH_SHORT
                     ).show()
+
+                    // Navigate to MainActivity after successful login
+                    navigateToMain()
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    showErrorMessage("Authentication failed: ${task.exception?.message}")
                 }
             }
+    }
+
+    private fun isUserLoggedIn(): Boolean {
+        val sharedPrefs = getSharedPreferences("MyFamilyPrefs", Context.MODE_PRIVATE)
+        return sharedPrefs.getBoolean("isLoggedIn", false)
+    }
+
+    private fun saveLoginState(userName: String?, userEmail: String?) {
+        val sharedPrefs = getSharedPreferences("MyFamilyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+        editor.putBoolean("isLoggedIn", true)
+        editor.putLong("loginTime", System.currentTimeMillis())
+
+        // Save user information if available
+        userName?.let { editor.putString("userName", it) }
+        userEmail?.let { editor.putString("userEmail", it) }
+
+        editor.apply()
+        Log.d("fire89", "Login state saved to SharedPreferences")
+    }
+
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showErrorMessage(message: String) {
+        Snackbar.make(
+            findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 }

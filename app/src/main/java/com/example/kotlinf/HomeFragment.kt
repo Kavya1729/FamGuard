@@ -1,27 +1,35 @@
 package com.example.kotlinf
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.provider.ContactsContract
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.ArrayList
 
 class HomeFragment : Fragment() {
 
-    lateinit var  inviteAdapter : InviteAdapter
+    lateinit var inviteAdapter: InviteAdapter
+    private lateinit var auth: FirebaseAuth
 
     private val listContacts: ArrayList<ContactModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
     }
 
     override fun onCreateView(
@@ -35,13 +43,16 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Setup logout functionality for 3 dots menu
+        setupLogoutMenu(view)
+
         val listMembers = listOf<MemberModel>(
             MemberModel(
                 "Kavya",
                 "Mohalla Kot Delhi Wale Amroha-244221",
                 "92%",
                 "220 m"
-                ),
+            ),
             MemberModel(
                 "Rahul",
                 "Delhi sarogni nagar near new bus adda",
@@ -54,14 +65,18 @@ class HomeFragment : Fragment() {
                 "67%",
                 "1000 km"
             ),
-            MemberModel("Ben10",
+            MemberModel(
+                "Ben10",
                 "game wordld not real, hard to find .",
                 "10%",
-                "24 m"),
-            MemberModel("keven11",
+                "24 m"
+            ),
+            MemberModel(
+                "keven11",
                 "jain-chok bhiwani near bda bazar haryana",
                 "82%",
-                "445 km"),
+                "445 km"
+            ),
         )
 
         val adapter = MemberAdapter(listMembers)
@@ -74,23 +89,64 @@ class HomeFragment : Fragment() {
         fetchDatabaseContacts()
 
         CoroutineScope(Dispatchers.IO).launch {
-
             insertDatabaseContacts(fetchContacts())
-
         }
-
 
         val inviteRecycler = requireView().findViewById<RecyclerView>(R.id.recycler_invite)
         inviteRecycler.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         inviteRecycler.adapter = inviteAdapter
-
     }
 
+    private fun setupLogoutMenu(view: View) {
+        // Using your existing menu_dots ImageView
+        val menuDots = view.findViewById<ImageView>(R.id.menu_dots)
+
+        menuDots?.setOnClickListener {
+            showLogoutDialog()
+        }
+    }
+
+    private fun showLogoutDialog() {
+        // Get current user info for the dialog
+        val currentUser = auth.currentUser
+        val userName = currentUser?.displayName ?: "User"
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout, $userName?")
+            .setPositiveButton("Logout") { _, _ ->
+                performLogout()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun performLogout() {
+        // Sign out from Firebase
+        auth.signOut()
+
+        // Clear login state from SharedPreferences
+        val sharedPrefs = requireActivity().getSharedPreferences("MyFamilyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPrefs.edit()
+        editor.putBoolean("isLoggedIn", false)
+        editor.remove("loginTime")
+        editor.remove("userName")
+        editor.remove("userEmail")
+        editor.apply()
+
+        // Navigate to LoginActivity
+        val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        requireActivity().finish()
+    }
 
     private fun fetchDatabaseContacts() {
         val database = MyFamilyDatabase.getDatabase(requireContext())
 
-        database.contactDao().getAllContacts().observe(viewLifecycleOwner){
+        database.contactDao().getAllContacts().observe(viewLifecycleOwner) {
             listContacts.clear()
             listContacts.addAll(it)
 
@@ -150,7 +206,6 @@ class HomeFragment : Fragment() {
 
         return listContacts
     }
-
 
     companion object {
         @JvmStatic
