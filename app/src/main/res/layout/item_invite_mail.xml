@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/dark_surface"
+    android:layout_margin="4dp"
     android:padding="16dp">
 
     <TextView
@@ -12,43 +12,49 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="sample@email.com"
-        android:textColor="@color/black"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         android:padding="8dp"
         app:layout_constraintEnd_toStartOf="@id/accept"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/accept"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:background="@android:color/transparent"
-        android:text="Accept"
-        android:textColor="@color/green"
-        android:textStyle="bold"
-        android:textSize="17sp"
-        android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="@id/mail"
-        app:layout_constraintEnd_toStartOf="@id/deny"
-        app:layout_constraintTop_toTopOf="@id/mail" />
-
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/deny"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:background="@android:color/transparent"
         android:text="Deny"
-        android:textColor="@android:color/holo_red_dark"
+        android:textColor="@color/text_primary"
         android:textStyle="bold"
-        android:padding="4dp"
-        android:textSize="17sp"
+        android:textSize="12sp"
+        android:backgroundTint="@color/red_primary"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:cornerRadius="18dp"
         app:layout_constraintBottom_toBottomOf="@id/mail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/mail" />
+
+    <com.google.android.material.button.MaterialButton
+    android:id="@+id/accept"
+    android:layout_width="wrap_content"
+    android:layout_height="36dp"
+    android:minWidth="0dp"
+    android:minHeight="0dp"
+    android:text="Accept"
+    android:textColor="@color/text_primary"
+    android:textStyle="bold"
+    android:textSize="12sp"
+    android:backgroundTint="@color/cyan_primary"
+    android:insetTop="0dp"
+    android:insetBottom="0dp"
+        android:layout_marginEnd="3dp"
+    app:cornerRadius="18dp"
+    app:layout_constraintBottom_toBottomOf="@id/mail"
+    app:layout_constraintEnd_toStartOf="@id/deny"
+    app:layout_constraintTop_toTopOf="@id/mail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

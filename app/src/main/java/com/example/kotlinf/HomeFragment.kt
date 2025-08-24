@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), InviteAdapter.OnInviteClick {
 
     lateinit var inviteAdapter: InviteAdapter
     lateinit var mContext: Context
@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
 
     private val listContacts: ArrayList<ContactModel> = ArrayList()
 
-    override fun onAttach(context:Context){
+    override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     }
@@ -52,37 +52,34 @@ class HomeFragment : Fragment() {
         // Setup logout functionality for 3 dots menu
         setupLogoutMenu(view)
 
+        // Setup location click to navigate to dashboard/maps
+        setupLocationClick(view)
+
         val listMembers = listOf<MemberModel>(
             MemberModel(
-                "Kavya",
-                "Mohalla Kot Delhi Wale Amroha-244221",
+                "Emily",
+                "Safe",
                 "92%",
                 "220 m"
             ),
             MemberModel(
-                "Rahul",
-                "Delhi sarogni nagar near new bus adda",
+                "John",
+                "At Home",
                 "44%",
                 "124 m"
             ),
             MemberModel(
-                "Krish",
-                "patal log near yamrAj AK-47 SECTOR",
+                "Emma",
+                "In Transit",
                 "67%",
                 "1000 km"
             ),
             MemberModel(
-                "Ben10",
-                "game wordld not real, hard to find .",
+                "Michael",
+                "Low Battery",
                 "10%",
                 "24 m"
-            ),
-            MemberModel(
-                "keven11",
-                "jain-chok bhiwani near bda bazar haryana",
-                "82%",
-                "445 km"
-            ),
+            )
         )
 
         val adapter = MemberAdapter(listMembers)
@@ -91,7 +88,7 @@ class HomeFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(mContext)
         recycler.adapter = adapter
 
-        inviteAdapter = InviteAdapter(listContacts)
+        inviteAdapter = InviteAdapter(listContacts, this)
         fetchDatabaseContacts()
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -104,16 +101,23 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupLogoutMenu(view: View) {
-        // Using your existing menu_dots ImageView
         val menuDots = view.findViewById<ImageView>(R.id.menu_dots)
-
         menuDots?.setOnClickListener {
             showLogoutDialog()
         }
     }
 
+    private fun setupLocationClick(view: View) {
+        val locationIcon = view.findViewById<ImageView>(R.id.location_img)
+        locationIcon?.setOnClickListener {
+            // Navigate to dashboard/maps
+            (activity as? MainActivity)?.let { mainActivity ->
+                mainActivity.navigateToMaps()
+            }
+        }
+    }
+
     private fun showLogoutDialog() {
-        // Get current user info for the dialog
         val currentUser = auth.currentUser
         val userName = currentUser?.displayName ?: "User"
 
@@ -130,10 +134,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun performLogout() {
-        // Sign out from Firebase
         auth.signOut()
 
-        // Clear login state from SharedPreferences
         val sharedPrefs = requireActivity().getSharedPreferences("MyFamilyPrefs", Context.MODE_PRIVATE)
         val editor = sharedPrefs.edit()
         editor.putBoolean("isLoggedIn", false)
@@ -142,7 +144,6 @@ class HomeFragment : Fragment() {
         editor.remove("userEmail")
         editor.apply()
 
-        // Navigate to LoginActivity
         val intent = Intent(mContext, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -155,14 +156,12 @@ class HomeFragment : Fragment() {
         database.contactDao().getAllContacts().observe(viewLifecycleOwner) {
             listContacts.clear()
             listContacts.addAll(it)
-
             inviteAdapter.notifyDataSetChanged()
         }
     }
 
     private suspend fun insertDatabaseContacts(listContacts1: ArrayList<ContactModel>) {
         val database = MyFamilyDatabase.getDatabase(mContext)
-
         database.contactDao().insertAll(listContacts1)
     }
 
@@ -211,6 +210,22 @@ class HomeFragment : Fragment() {
         }
 
         return listContacts
+    }
+
+    override fun onInviteClick(contact: ContactModel) {
+        // Add contact to invited list (you can implement this based on your needs)
+        // For now, let's show a simple confirmation
+        AlertDialog.Builder(mContext)
+            .setTitle("Invite Contact")
+            .setMessage("Send invitation to ${contact.name}?")
+            .setPositiveButton("Send") { _, _ ->
+                // Add logic to send invitation
+                // You might want to add this contact to a different list or send via email
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     companion object {

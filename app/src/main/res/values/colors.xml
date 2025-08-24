@@ -6,4 +6,17 @@
     <color name="green">#63d2c8</color>
     <color name="gray">#D3D3D3</color>
     <color name="light_blue">#E3F2FD</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="dark_background">#0A0E1A</color>
+    <color name="dark_card">#1A1F2E</color>
+    <color name="dark_surface">#252B3B</color>
+    <color name="cyan_primary">#2ED3C6</color>
+    <color name="cyan_secondary">#5DE8DB</color>
+    <color name="red_primary">#FF4757</color>
+    <color name="red_secondary">#FF6B7A</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B0BEC5</color>
+    <color name="text_tertiary">#78849E</color>
+    <color name="orange_warning">#FF9500</color>
 </resources>

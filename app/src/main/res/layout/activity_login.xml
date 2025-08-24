@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/dark_background"
     tools:context=".LoginActivity">
 
 
@@ -22,7 +23,10 @@
         android:layout_margin="24dp"
         android:insetTop="0dp"
         android:onClick="handleSignIn"
+        android:backgroundTint="@color/cyan_primary"
         android:insetBottom="0dp"
+        android:textStyle="bold"
+        android:textSize="16sp"
         android:padding="16dp"
         android:text="continue_with_google"
         app:cornerRadius="16dp"

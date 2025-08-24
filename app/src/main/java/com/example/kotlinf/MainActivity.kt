@@ -1,7 +1,6 @@
 package com.example.kotlinf
 
 import android.Manifest
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -36,14 +35,12 @@ class MainActivity : AppCompatActivity() {
     )
 
     val permissionCode = 10
+    private lateinit var bottomBar: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Install splash screen BEFORE super.onCreate()
         installSplashScreen()
-
         super.onCreate(savedInstanceState)
 
-        // Check if user is logged in
         if (!isUserLoggedIn()) {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
@@ -58,7 +55,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Check permissions and setup location
         if (isAllPermissionsGranted()) {
             if (isLocationEnabled(this)) {
                 setUpLocationListener()
@@ -69,22 +65,25 @@ class MainActivity : AppCompatActivity() {
             askForPermission()
         }
 
-        // Setup bottom navigation
-        val bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
+        // Setup bottom navigation (removed profile)
+        bottomBar = findViewById<BottomNavigationView>(R.id.bottom_bar)
         bottomBar.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_guard -> inflateFragment(GuardFragment.newInstance())
                 R.id.nav_home -> inflateFragment(HomeFragment.newInstance())
                 R.id.nav_dashboard -> inflateFragment(MapsFragment())
-                else -> inflateFragment(ProfileFragment.newInstance())
+                else -> false
             }
             true
         }
 
         bottomBar.selectedItemId = R.id.nav_home
-
-        // Save user data to Firestore
         saveUserToFirestore()
+    }
+
+    fun navigateToMaps() {
+        bottomBar.selectedItemId = R.id.nav_dashboard
+        inflateFragment(MapsFragment())
     }
 
     private fun isLocationEnabled(context: Context): Boolean {
@@ -117,10 +116,9 @@ class MainActivity : AppCompatActivity() {
     private fun setUpLocationListener() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // Create location request with proper settings
         val locationRequest = LocationRequest.create().apply {
-            interval = 10000 // 10 seconds
-            fastestInterval = 5000 // 5 seconds
+            interval = 10000
+            fastestInterval = 5000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
@@ -131,14 +129,11 @@ class MainActivity : AppCompatActivity() {
                 locationResult.lastLocation?.let { location ->
                     Log.d("location89", "onLocationResult: latitude ${location.latitude}")
                     Log.d("location89", "onLocationResult: longitude ${location.longitude}")
-
-                    // Update user location in Firestore
                     updateLocationInFirestore(location.latitude, location.longitude)
                 }
             }
         }
 
-        // Check permission before requesting location updates
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -238,7 +233,6 @@ class MainActivity : AppCompatActivity() {
                     showGPSNotEnabledDialog(this)
                 }
             } else {
-                // Handle permission denied
                 Log.e("permission89", "Some permissions were denied")
             }
         }
