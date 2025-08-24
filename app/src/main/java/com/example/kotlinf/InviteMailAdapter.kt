@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class InviteMailAdapter(
     private val listInvites: List<String>,
-    private val onActionClick: GuardFragment
+    private val onActionClick: OnActionClick
 ) : RecyclerView.Adapter<InviteMailAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
